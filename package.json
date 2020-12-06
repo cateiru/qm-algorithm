@@ -1,0 +1,16 @@
+{
+  "name": "qm-algorithm",
+  "version": "1.0.0",
+  "description": "Quine–McCluskey algorithm",
+  "main": "src/index.ts",
+  "repository": "https://github.com/yuto51942/qm-algorithm.git",
+  "author": "Yuto Watanabe <yuto.w51942@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ts-node": "^9.1.0",
+    "typescript": "^4.1.2"
+  },
+  "scripts": {
+    "dev": "ts-node src/index.ts"
+  }
+}
