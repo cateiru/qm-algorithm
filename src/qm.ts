@@ -19,12 +19,20 @@ export class QMElement {
     return this.inputBinData.join(' ')
   }
 
+  exportBinOrigenData(): ReadonlyArray<'0' | '1'>{
+    return this.inputBinData
+  }
+
+  exportInputNumberData(): number {
+    return this.inputData
+  }
+
   exportExportData(): string {
     return this.exportData
   }
 
   exportNumberOfOne(): number {
-    if(this.exportData === '0'){
+    if(this.exportData === '1'){
       return this.inputBinData.filter(x => x==='1').length
     }else{
       return -1
