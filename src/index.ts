@@ -1,7 +1,8 @@
 import inputQM from './input'
 import {question} from 'readline-sync'
 import {printTruthTable} from './printData'
-import {calculate} from './calculate'
+import {calculate, Label} from './calculate'
+import {magenta, reset} from './colors'
 
 
 function main() {
@@ -14,7 +15,30 @@ function main() {
 
   printTruthTable(qms, numberOfInputLength)
 
-  calculate(qms, numberOfInputLength)
+  const result = calculate(qms, numberOfInputLength)
+  let text = magenta + 'f = '
+
+  for(let i = 0; result.length > i; ++i){
+    const resultBin = result[i].bin.filter(e => {
+      return e !== '-'
+    })
+    resultBin.forEach((e, j) => {
+      if(e === '0'){
+        text += `\^${String.fromCharCode(65+(j%26))}`
+      }else if(e === '1'){
+        text += `${String.fromCharCode(65+(j%26))}`
+      }
+
+      if(j !== (resultBin.length-1)){
+        text += ' * '
+      }
+    })
+    if(i !== (result.length-1)){
+      text += ' + '
+    }
+  }
+
+  console.log(text + reset)
 }
 
 main()
