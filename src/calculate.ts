@@ -1,12 +1,12 @@
 import {QMElement} from './qm'
 
-interface Label {
+export interface Label {
     bin: ReadonlyArray<string>
     dec: number[]
     oneLength: number
 }
 
-export function calculate(element: ReadonlyArray<QMElement>, numberOfInputLength: number){
+export function calculate(element: ReadonlyArray<QMElement>, numberOfInputLength: number): ReadonlyArray<Label>{
     const label: Array<Label> = []
 
     element.forEach((e, i) => {
@@ -24,12 +24,79 @@ export function calculate(element: ReadonlyArray<QMElement>, numberOfInputLength
     const term = optimization(label)
 
     console.log(term)
+
+    let requiredTermDec: number[] = []
+    const requiredItems: Label[] = []
+    const selectItems: Label[] = []
+    const multipleTerms: number[] = []
+
+    for(let i = 0; term.length > i; ++i){
+        // 必須項を求める
+        let isRequired = false
+        for(const termDec of term[i].dec){
+            let isMin = true
+            for(let j = 0; term.length > j; ++j){
+                if(j !== i && term[j].dec.includes(termDec)){
+                    isMin = false
+                }
+            }
+            if(isMin){
+                isRequired = true
+            }else{
+                if(!multipleTerms.includes(termDec)){
+                    multipleTerms.push(termDec)
+                }
+            }
+        }
+        if(isRequired){
+            requiredItems.push(term[i])
+            requiredTermDec = requiredTermDec.concat(term[i].dec)
+        }else{
+            selectItems.push(term[i])
+        }
+    }
+
+    const needTerm = multipleTerms.filter(i =>requiredTermDec.indexOf(i) == -1);
+    const needMax = needTerm.length
+
+    const termTag: {
+        needItems: number,
+        label: Label
+    }[] = []
+
+    // 最簡形を求める
+    for(let i = 0; selectItems.length > i; ++i){
+        let count = 0
+        for(let j = 0; needMax > j; ++j){
+            if(selectItems[i].dec.includes(needTerm[j])){
+                count++
+            }
+        }
+        termTag.push({
+            needItems: count,
+            label: selectItems[i]
+        })
+    }
+
+    termTag.sort().reverse()
+
+    let weight = needMax
+    for(const element of termTag){
+        requiredItems.push(element.label)
+
+        weight -= element.needItems
+        if(0 >= weight){
+            break
+        }
+    }
+
+    return requiredItems
 }
 
 /**
- * 再帰的に主項を計算します。
- * @param label 出力が1のときの入力データ
- */
+* 再帰的に主項を計算します。
+* @param label 出力が1のときの入力データ
+*/
 function optimization(label: ReadonlyArray<Label>): ReadonlyArray<Label> {
 
     if(label.length <= 0) {
@@ -84,10 +151,10 @@ function optimization(label: ReadonlyArray<Label>): ReadonlyArray<Label> {
 }
 
 /**
- * 配列を比較して違う要素のインデックスを返します。
- * @param first Array element
- * @param second Array element
- */
+* 配列を比較して違う要素のインデックスを返します。
+* @param first Array element
+* @param second Array element
+*/
 function diffArray(first: ReadonlyArray<string>, second: ReadonlyArray<string>): (number|undefined) {
     if(first.length !== second.length){
         throw new Error('引数の配列は同じ長さである必要があります。')
