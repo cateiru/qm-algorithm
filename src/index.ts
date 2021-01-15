@@ -19,14 +19,18 @@ function main() {
   let text = magenta + 'f = '
 
   for(let i = 0; result.length > i; ++i){
-    const resultBin = result[i].bin.filter(e => {
-      return e !== '-'
-    })
+    // const resultBin = result[i].bin.filter(e => {
+    //   return e !== '-'
+    // })
+    const resultBin = result[i].bin
+
     resultBin.forEach((e, j) => {
       if(e === '0'){
         text += `\^${String.fromCharCode(65+(j%26))}`
       }else if(e === '1'){
         text += `${String.fromCharCode(65+(j%26))}`
+      }else if(e === '-'){
+        text += '1'
       }
 
       if(j !== (resultBin.length-1)){
